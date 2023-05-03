@@ -1,10 +1,60 @@
 const canvas = document.querySelector('#game');
 const game = canvas.getContext('2d');
+const up = document.getElementById('up');
+const left = document.getElementById('left');
+const right = document.getElementById('right');
+const down = document.getElementById('down');
+
 let canvasSize;
 let elementsSize;
 // Evento cuando todo el html ya carga completamente
 window.addEventListener('load', setCanvasSize);
 window.addEventListener('resize',setCanvasSize);
+window.addEventListener('keydown', playerMove);
+up.addEventListener('click',playerMovebtn);
+left.addEventListener('click',playerMovebtn);
+right.addEventListener('click',playerMovebtn);
+down.addEventListener('click',playerMovebtn);
+
+function playerMove(event) {
+    const keys = {
+        'up': 38,
+        'right': 39,
+        'left' : 37,
+        'down' : 40
+    }
+
+    switch (event.keyCode) {
+        case keys['up']:
+            console.log('arriba')
+            break;
+        case keys['right']:
+            console.log('derecha')
+            break;
+        case keys['left']:
+            console.log('izquierda')
+            break;
+        case keys['down']:
+            console.log('abajo')
+            break;
+        default:
+            console.log(false);
+            break;
+    }
+}
+
+function playerMovebtn (event) {
+    console.log(event.target);
+    if (event.target==up) {
+        console.log('boton arriba')
+    } else if (event.target==right) {
+        console.log('derecha')
+    } else if (event.target==left) {
+        console.log('izquierda')
+    } else if (event.target==down) {
+        console.log('abajo')
+    }
+}
 
 function setCanvasSize() {
     if (window.innerWidth<window.innerHeight) {
