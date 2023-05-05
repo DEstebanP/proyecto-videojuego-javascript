@@ -10,50 +10,16 @@ let elementsSize;
 // Evento cuando todo el html ya carga completamente
 window.addEventListener('load', setCanvasSize);
 window.addEventListener('resize',setCanvasSize);
-window.addEventListener('keydown', playerMove);
-up.addEventListener('click',playerMovebtn);
-left.addEventListener('click',playerMovebtn);
-right.addEventListener('click',playerMovebtn);
-down.addEventListener('click',playerMovebtn);
+window.addEventListener('keydown', playerMoveKeys);
+up.addEventListener('click',playerUp);
+left.addEventListener('click',playerLeft);
+right.addEventListener('click',playerRight);
+down.addEventListener('click',playerDown);
 
-function playerMove(event) {
-    const keys = {
-        'up': 38,
-        'right': 39,
-        'left' : 37,
-        'down' : 40
-    }
-
-    switch (event.keyCode) {
-        case keys['up']:
-            console.log('arriba')
-            break;
-        case keys['right']:
-            console.log('derecha')
-            break;
-        case keys['left']:
-            console.log('izquierda')
-            break;
-        case keys['down']:
-            console.log('abajo')
-            break;
-        default:
-            console.log(false);
-            break;
-    }
-}
-
-function playerMovebtn (event) {
-    console.log(event.target);
-    if (event.target==up) {
-        console.log('boton arriba')
-    } else if (event.target==right) {
-        console.log('derecha')
-    } else if (event.target==left) {
-        console.log('izquierda')
-    } else if (event.target==down) {
-        console.log('abajo')
-    }
+// Objeto con las posiciones de nuestro jugador
+let playerPos = {
+    x: undefined,
+    y: undefined
 }
 
 function setCanvasSize() {
@@ -68,6 +34,8 @@ function setCanvasSize() {
 
     elementsSize = (canvasSize / 10)-1; //El tamaño que deberia ocupar cada emoji en nuestra grilla de 10x10
     
+    playerPos.x=undefined;
+    playerPos.y=undefined;
     startGame()
 
     // dibujar un cuadro o rectangulo en el canvas x, y, width, height
@@ -83,17 +51,19 @@ function setCanvasSize() {
 
 }
 function startGame() {
-    console.log({canvasSize, elementsSize});
+    //console.log({canvasSize, elementsSize});
 
     game.font = elementsSize + 'px Verdana';
-    game.textAlign = 'start';
+    game.textAlign = 'left';
 
     const map = maps[0];
     //trim limpia espacios en un string
     const mapRows = map.trim().split('\n');//genera un elemento de array por cada salto de linea que encuentre
     //row es cada string del array mapRows. Con trim quito los espacios y con split me devuele cada caracter como un elemento de otro array
     const mapRowsCols = mapRows.map(row => row.trim().split(''));
-    console.log({mapRows,mapRowsCols})
+    //console.log({mapRows,mapRowsCols})
+
+    game.clearRect(0,0,(canvasSize),(canvasSize));
 
     mapRowsCols.forEach((row, rowIndex) => {
         row.forEach((col, colIndex)=> {
@@ -101,8 +71,17 @@ function startGame() {
             let posX = elementsSize*colIndex;
             let posY = elementsSize*(rowIndex+1);
             game.fillText(emoji, posX, posY);
+
+            if (col == 'O') {
+                if (!playerPos.x && !playerPos.y) {
+                    playerPos.x = posX;
+                    playerPos.y = posY;
+                }       
+            }
         })
     });
+
+    playerMove();
 
     /* let positionx=0;
     for (let x=0; x<10;x++) {
@@ -111,4 +90,69 @@ function startGame() {
         }
         positionx+=elementsSize;
     } */
+}
+
+function playerMove() {
+    game.fillText(emojis['PLAYER'], playerPos.x, playerPos.y)
+}
+
+
+function playerMoveKeys(event) {
+    const keys = {
+        'up': 38,
+        'right': 39,
+        'left' : 37,
+        'down' : 40
+    }
+
+    switch (event.keyCode) {
+        case keys['up']:
+            playerUp();
+            break;
+        case keys['right']:
+            playerRight();
+            break;
+        case keys['left']:
+            playerLeft();
+            break;
+        case keys['down']:
+            playerDown();
+            break;
+        default:
+            
+            break;
+    }
+}
+
+function playerUp() {
+    console.log('arriba');
+
+    if (playerPos.y > elementsSize+1) {
+        playerPos.y -= elementsSize;
+    }
+    startGame();
+}
+function playerLeft() {
+    console.log('izquierda');
+    
+    if (playerPos.x > 1) {
+        playerPos.x -= elementsSize;
+    }
+    startGame();
+}
+function playerRight() {
+    console.log('derecha');
+    
+    if (playerPos.x < canvasSize-elementsSize-10) {
+        playerPos.x += elementsSize;
+    }
+    startGame();
+}
+function playerDown() {
+    console.log('abajo');
+    
+    if (playerPos.y < canvasSize-10) {
+        playerPos.y += elementsSize;
+    }
+    startGame();
 }
