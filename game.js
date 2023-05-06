@@ -22,6 +22,13 @@ let playerPos = {
     y: undefined
 }
 
+let giftPos = {
+    x: undefined,
+    y: undefined
+}
+
+let map = maps[0];
+
 function setCanvasSize() {
     if (window.innerWidth<window.innerHeight) {
         canvasSize = window.innerWidth * 0.75
@@ -48,15 +55,30 @@ function setCanvasSize() {
     game.textAlign = 'start';
     game.fillText('Holaaaa', 25, 25);
     */
-
 }
+let i=0;
+let giftsCounter=0;
 function startGame() {
     //console.log({canvasSize, elementsSize});
 
     game.font = elementsSize + 'px Verdana';
     game.textAlign = 'left';
 
-    const map = maps[0];
+    let playerX = Math.floor(playerPos.x);
+    let playerY = Math.floor(playerPos.y);
+    if (i < maps.length-1) {
+        if (giftPos.y== playerY && giftPos.x == playerX) {
+            map=maps[i+=1]
+            console.log(i);
+        }
+    }
+
+    if (giftPos.y== playerY && giftPos.x == playerX) {
+        giftsCounter+=1;
+        if (giftsCounter == maps.length){
+            console.log('Te pasaste el juego');    
+        }
+    }
     //trim limpia espacios en un string
     const mapRows = map.trim().split('\n');//genera un elemento de array por cada salto de linea que encuentre
     //row es cada string del array mapRows. Con trim quito los espacios y con split me devuele cada caracter como un elemento de otro array
@@ -77,6 +99,9 @@ function startGame() {
                     playerPos.x = posX;
                     playerPos.y = posY;
                 }       
+            } else if (col=='I') {
+                giftPos.x= Math.floor(posX);
+                giftPos.y = Math.floor(posY);
             }
         })
     });
@@ -129,30 +154,30 @@ function playerUp() {
 
     if (playerPos.y > elementsSize+1) {
         playerPos.y -= elementsSize;
+        startGame();
     }
-    startGame();
 }
 function playerLeft() {
     console.log('izquierda');
     
     if (playerPos.x > 1) {
         playerPos.x -= elementsSize;
+        startGame();
     }
-    startGame();
 }
 function playerRight() {
     console.log('derecha');
     
     if (playerPos.x < canvasSize-elementsSize-10) {
         playerPos.x += elementsSize;
+        startGame();
     }
-    startGame();
 }
 function playerDown() {
     console.log('abajo');
     
     if (playerPos.y < canvasSize-10) {
         playerPos.y += elementsSize;
+        startGame();
     }
-    startGame();
 }
