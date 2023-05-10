@@ -22,10 +22,16 @@ let playerPos = {
     y: undefined
 }
 
+let playerPosInit = {
+    x: undefined,
+    y: undefined
+}
+
 let giftPos = {
     x: undefined,
     y: undefined
 }
+
 
 let map = maps[0];
 
@@ -64,10 +70,11 @@ function startGame() {
     game.font = elementsSize + 'px Verdana';
     game.textAlign = 'left';
 
+    // Cambiar de mapa
     let playerX = Math.floor(playerPos.x);
     let playerY = Math.floor(playerPos.y);
     if (i < maps.length-1) {
-        if (giftPos.y== playerY && giftPos.x == playerX) {
+        if (giftPos.y == playerY && giftPos.x == playerX) {
             map=maps[i+=1]
             console.log(i);
         }
@@ -95,6 +102,8 @@ function startGame() {
             game.fillText(emoji, posX, posY);
 
             if (col == 'O') {
+                playerPosInit.x = posX;
+                playerPosInit.y = posY;
                 if (!playerPos.x && !playerPos.y) {
                     playerPos.x = posX;
                     playerPos.y = posY;
@@ -102,6 +111,11 @@ function startGame() {
             } else if (col=='I') {
                 giftPos.x= Math.floor(posX);
                 giftPos.y = Math.floor(posY);
+            } else if (col == 'X') { // Detectar colisones con bombas
+                if (Math.floor(posX) == Math.floor(playerPos.x) && Math.floor(posY) == Math.floor(playerPos.y)) {
+                    playerPos.x = playerPosInit.x;
+                    playerPos.y = playerPosInit.y;
+                }
             }
         })
     });
@@ -118,7 +132,8 @@ function startGame() {
 }
 
 function playerMove() {
-    game.fillText(emojis['PLAYER'], playerPos.x, playerPos.y)
+    game.fillText(emojis['PLAYER'], playerPos.x, playerPos.y);
+
 }
 
 
