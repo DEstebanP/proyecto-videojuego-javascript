@@ -7,6 +7,8 @@ const down = document.getElementById('down');
 
 let canvasSize;
 let elementsSize;
+let level=0;
+let lives = 3;
 // Evento cuando todo el html ya carga completamente
 window.addEventListener('load', setCanvasSize);
 window.addEventListener('resize',setCanvasSize);
@@ -62,30 +64,19 @@ function setCanvasSize() {
     game.fillText('Holaaaa', 25, 25);
     */
 }
-let i=0;
-let giftsCounter=0;
+
 function startGame() {
     //console.log({canvasSize, elementsSize});
 
     game.font = elementsSize + 'px Verdana';
     game.textAlign = 'left';
-
-    // Cambiar de mapa
-    let playerX = Math.floor(playerPos.x);
-    let playerY = Math.floor(playerPos.y);
-    if (i < maps.length-1) {
-        if (giftPos.y == playerY && giftPos.x == playerX) {
-            map=maps[i+=1]
-            console.log(i);
-        }
+    console.log(level);
+    map = maps[level];
+    if (!map) {
+        gameWin();
+        return
     }
 
-    if (giftPos.y== playerY && giftPos.x == playerX) {
-        giftsCounter+=1;
-        if (giftsCounter == maps.length){
-            console.log('Te pasaste el juego');    
-        }
-    }
     //trim limpia espacios en un string
     const mapRows = map.trim().split('\n');//genera un elemento de array por cada salto de linea que encuentre
     //row es cada string del array mapRows. Con trim quito los espacios y con split me devuele cada caracter como un elemento de otro array
@@ -115,6 +106,8 @@ function startGame() {
                 if (Math.floor(posX) == Math.floor(playerPos.x) && Math.floor(posY) == Math.floor(playerPos.y)) {
                     playerPos.x = playerPosInit.x;
                     playerPos.y = playerPosInit.y;
+                    lives--
+                    console.log(lives);
                 }
             }
         })
@@ -132,10 +125,34 @@ function startGame() {
 }
 
 function playerMove() {
+    levelWin();
+    if (!lives) {
+        gameOver(); 
+    }
     game.fillText(emojis['PLAYER'], playerPos.x, playerPos.y);
-
 }
 
+function levelWin() {
+    let playerX = Math.floor(playerPos.x);
+    let playerY = Math.floor(playerPos.y);
+    if (giftPos.y == playerY && giftPos.x == playerX) {
+        level++
+        console.log(level);
+        startGame();
+    }
+}
+
+function gameOver() {
+        console.log('Perdiste tus tres vidas, vuelve a empezar');
+        level=0;
+        playerPos.x = undefined;
+        playerPos.y = undefined;
+        lives = 3;
+        startGame();
+}
+function gameWin() {
+    console.log('Terminaste el juego')
+}
 
 function playerMoveKeys(event) {
     const keys = {
