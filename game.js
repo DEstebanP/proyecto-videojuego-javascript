@@ -4,11 +4,16 @@ const up = document.getElementById('up');
 const left = document.getElementById('left');
 const right = document.getElementById('right');
 const down = document.getElementById('down');
+const spanLives = document.getElementById('lives');
+const spanTime = document.getElementById('time');
 
 let canvasSize;
 let elementsSize;
 let level=0;
 let lives = 3;
+let starTime;
+let interval;
+
 // Evento cuando todo el html ya carga completamente
 window.addEventListener('load', setCanvasSize);
 window.addEventListener('resize',setCanvasSize);
@@ -77,6 +82,12 @@ function startGame() {
         return
     }
 
+    if (!starTime) {
+        starTime = Math.floor(Date.now() / 1000);
+        interval = setInterval(showTime, 1000)
+    }
+
+
     //trim limpia espacios en un string
     const mapRows = map.trim().split('\n');//genera un elemento de array por cada salto de linea que encuentre
     //row es cada string del array mapRows. Con trim quito los espacios y con split me devuele cada caracter como un elemento de otro array
@@ -127,8 +138,10 @@ function startGame() {
 function playerMove() {
     levelWin();
     if (!lives) {
+        starTime = undefined;
         gameOver(); 
     }
+    showLives();
     game.fillText(emojis['PLAYER'], playerPos.x, playerPos.y);
 }
 
@@ -151,9 +164,23 @@ function gameOver() {
         startGame();
 }
 function gameWin() {
-    console.log('Terminaste el juego')
+    console.log('Terminaste el juego');
+    clearInterval(interval);
+}
+function showLives() {
+    // Array(2) crearia un array de dos posiciones
+    // .fill se llena cada posicion con un emoji [1,2,3]
+    /* const heartsArr = Array(lives).fill(emojis['HEART']); 
+    console.log(heartsArr);
+    spanLives.innerText = "";
+    heartsArr.forEach(heart => spanLives.innerText += heart); */
+
+    spanLives.innerHTML = emojis['HEART'].repeat(lives);
 }
 
+function showTime() {
+    spanTime.innerText = Math.floor(Date.now() / 1000) - starTime;
+}
 function playerMoveKeys(event) {
     const keys = {
         'up': 38,
