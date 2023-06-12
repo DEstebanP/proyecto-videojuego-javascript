@@ -14,6 +14,8 @@ let lives = 3;
 let starTime;
 let interval;
 
+
+
 // Evento cuando todo el html ya carga completamente
 window.addEventListener('load', setCanvasSize);
 window.addEventListener('resize',setCanvasSize);
@@ -73,11 +75,16 @@ function setCanvasSize() {
 function startGame() {
     //console.log({canvasSize, elementsSize});
 
+    if (!localStorage.getItem("record")){
+        localStorage.setItem("record", 0);
+    }
+
     game.font = elementsSize + 'px Verdana';
     game.textAlign = 'left';
     console.log(level);
     map = maps[level];
     if (!map) {
+        console.log(map);
         gameWin();
         return
     }
@@ -150,7 +157,6 @@ function levelWin() {
     let playerY = Math.floor(playerPos.y);
     if (giftPos.y == playerY && giftPos.x == playerX) {
         level++
-        console.log(level);
         startGame();
     }
 }
@@ -166,6 +172,16 @@ function gameOver() {
 function gameWin() {
     console.log('Terminaste el juego');
     clearInterval(interval);
+
+    let isRecord = showTime() < localStorage.getItem("record");
+    if (localStorage.getItem("record") == 0) {
+        console.log("Primer record");
+        localStorage.setItem("record", showTime())
+    }
+    if (isRecord) {
+        console.log("Tu nuevo record es de " + showTime());
+        localStorage.setItem("record", showTime())
+    }
 }
 function showLives() {
     // Array(2) crearia un array de dos posiciones
@@ -179,7 +195,9 @@ function showLives() {
 }
 
 function showTime() {
-    spanTime.innerText = Math.floor(Date.now() / 1000) - starTime;
+    actualTime = Math.floor(Date.now() / 1000) - starTime;
+    spanTime.innerText = actualTime;
+    return actualTime
 }
 function playerMoveKeys(event) {
     const keys = {
@@ -209,32 +227,24 @@ function playerMoveKeys(event) {
 }
 
 function playerUp() {
-    console.log('arriba');
-
     if (playerPos.y > elementsSize+1) {
         playerPos.y -= elementsSize;
         startGame();
     }
 }
 function playerLeft() {
-    console.log('izquierda');
-    
     if (playerPos.x > 1) {
         playerPos.x -= elementsSize;
         startGame();
     }
 }
 function playerRight() {
-    console.log('derecha');
-    
     if (playerPos.x < canvasSize-elementsSize-10) {
         playerPos.x += elementsSize;
         startGame();
     }
 }
 function playerDown() {
-    console.log('abajo');
-    
     if (playerPos.y < canvasSize-10) {
         playerPos.y += elementsSize;
         startGame();
