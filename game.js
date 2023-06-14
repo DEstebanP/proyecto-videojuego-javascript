@@ -6,6 +6,7 @@ const right = document.getElementById('right');
 const down = document.getElementById('down');
 const spanLives = document.getElementById('lives');
 const spanTime = document.getElementById('time');
+const spanRecord = document.getElementById('record');
 
 let canvasSize;
 let elementsSize;
@@ -91,7 +92,9 @@ function startGame() {
 
     if (!starTime) {
         starTime = Math.floor(Date.now() / 1000);
-        interval = setInterval(showTime, 1000)
+        interval = setInterval(showTime, 1000);
+
+        spanRecord.innerText = localStorage.getItem("record");
     }
 
 
@@ -181,7 +184,10 @@ function gameWin() {
     if (isRecord) {
         console.log("Tu nuevo record es de " + showTime());
         localStorage.setItem("record", showTime())
+    } else {
+        console.log("Lo siento, no superaste tu record de " + localStorage.getItem("record"))
     }
+
 }
 function showLives() {
     // Array(2) crearia un array de dos posiciones
